@@ -1,0 +1,17 @@
+"""
+This approach allows us to work with just one settings object any time 
+we need to access an individual setting. 
+This also makes it easier to modify the game’s appearance and behavior as our project grows
+"""
+
+class Settings:
+       """A class to store all settings for Alien Invasion."""
+       def __init__(self):
+           """Initialize the game's settings."""
+           # Screen settings
+           self.screen_width = 800
+           self.screen_height = 400
+           self.bg_color = (230, 230, 230)
+
+           # adjusting the ship speed
+           self.ship_speed = 1.5
