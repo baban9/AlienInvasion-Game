@@ -2,6 +2,7 @@ import sys
 import pygame
 from settings import Settings
 from ship import Ship
+from bullet import Bullet
 
 
 class AlienInvasion:
@@ -25,7 +26,10 @@ class AlienInvasion:
         pygame.display.set_caption("Alien Invasion") 
 
         # display the ship
-        self.ship = Ship(self)               
+        self.ship = Ship(self)  
+
+        # for bullets 
+        self.bullets = pygame.sprite.Group()             
             
         """ 
         The object assigned to self.screen is called a surface. 
@@ -40,11 +44,22 @@ class AlienInvasion:
 
         while True:
             self._check_events() # helper to check the actions. 
-            self.ship.update()
+            self.ship.update() # updates the position of the ship
+            self._update_bullets() # updates the position of any bullets fired from the ship
+            self.bullets.update() 
+
+            # print(len(self.bullets))
+
             self._update_screen() # helper to draw the screen and update that. 
 
             # Redraw the screen during each pass through the loop.
         self.screen.fill(self.bg_color)
+
+    def _update_bullets(self):
+        # Get rid of bullets that have disappeared.
+                    for bullet in self.bullets.copy():
+            if bullet.rect.bottom <= 0:
+                 self.bullets.remove(bullet)
 
     def _check_events(self):
         # Watch for keyboard and mouse events.
@@ -70,6 +85,9 @@ class AlienInvasion:
         #  draw the ship on the screen
         self.ship.blitme()
 
+        # To draw all fired bullets to the screen
+        for bullet in self.bullets.sprites(): 
+            bullet.draw_bullet()
         # Make the most recently drawn screen visible.
         pygame.display.flip()
     
@@ -79,6 +97,14 @@ class AlienInvasion:
             self.ship.moving_right = True
         elif event.key == pygame.K_LEFT:
             self.ship.moving_left = True
+        elif event.key == pygame.K_SPACE: 
+            self._fire_bullet()
+    
+    def _fire_bullet(self):
+        """Create a new bullet and add it to the bullets group."""
+        if len(self.bullets) < self.settings.bullets_allowed:
+            new_bullet = Bullet(self)
+            self.bullets.add(new_bullet)
 
 
 if __name__ == '__main__':

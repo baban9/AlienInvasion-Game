@@ -24,3 +24,9 @@ Each keypress is registered as a KEYDOWN event.
 When Pygame detects a KEYDOWN event, 
     - we need to check whether the key that was pressed is one that triggers a certain action.
 
+For Bullets 
+    - Bullets will then travel straight up the screen until they disappear off the top of the screen 
+
+Importing the sprite module from pygame. 
+    - When you use sprites, you can group related elements in your game and act on all the grouped elements at once
+
