@@ -9,17 +9,17 @@ class HUD:
     def __init__(self, ai_game):
         self.ai_game = ai_game
         self.screen = ai_game.screen
-        self.settings = ai_game.settings
-        self.stats = ai_game.stats
         self.font = pygame.font.SysFont(None, 36)
         self.title_font = pygame.font.SysFont(None, 72)
         self.subtitle_font = pygame.font.SysFont(None, 32)
 
     def show_score(self):
-        score = self.font.render(f"Score: {self.stats.score}", True, self.settings.text_color)
-        level = self.font.render(f"Level: {self.stats.level}", True, self.settings.text_color)
-        lives = self.font.render(f"Lives: {self.stats.ships_left}", True, self.settings.text_color)
-        high = self.font.render(f"Best: {self.stats.high_score}", True, self.settings.muted_text_color)
+        stats = self.ai_game.stats
+        settings = self.ai_game.settings
+        score = self.font.render(f"Score: {stats.score}", True, settings.text_color)
+        level = self.font.render(f"Level: {stats.level}", True, settings.text_color)
+        lives = self.font.render(f"Lives: {stats.ships_left}", True, settings.text_color)
+        high = self.font.render(f"Best: {stats.high_score}", True, settings.muted_text_color)
         self.screen.blit(score, (20, 20))
         self.screen.blit(level, (20, 56))
         self.screen.blit(lives, (20, 92))
@@ -30,8 +30,9 @@ class HUD:
         overlay.fill((0, 0, 0, 120))
         self.screen.blit(overlay, (0, 0))
 
-        title_image = self.title_font.render(title, True, self.settings.text_color)
-        subtitle_image = self.subtitle_font.render(subtitle, True, self.settings.muted_text_color)
+        settings = self.ai_game.settings
+        title_image = self.title_font.render(title, True, settings.text_color)
+        subtitle_image = self.subtitle_font.render(subtitle, True, settings.muted_text_color)
         title_rect = title_image.get_rect(center=self.screen.get_rect().center)
         subtitle_rect = subtitle_image.get_rect(
             center=(self.screen.get_rect().centerx, title_rect.bottom + 28)
@@ -45,12 +46,16 @@ class HUD:
     def show_game_over(self):
         self.show_center_message(
             "Game Over",
-            f"Final score: {self.stats.score}  |  R restart  |  Q quit",
+            f"Final score: {self.ai_game.stats.score}  |  R restart  |  Q quit",
         )
 
     def show_level_up(self):
+        stats = self.ai_game.stats
+        settings = self.ai_game.settings
         message = self.subtitle_font.render(
-            f"Level {self.stats.level}", True, self.settings.text_color
+            f"Level {stats.level}  |  Speed increased",
+            True,
+            settings.text_color,
         )
         rect = message.get_rect(center=self.screen.get_rect().center)
         self.screen.blit(message, rect)

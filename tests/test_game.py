@@ -34,6 +34,16 @@ def test_level_progression_increases_difficulty():
     assert settings.alien_speed > initial_speed
 
 
+def test_stats_replacement_matches_start_game_pattern():
+    """start_game() creates a new GameStats object; readers must use ai_game.stats."""
+    settings = Settings()
+    stats_before = GameStats(settings)
+    stats_after = GameStats(settings)
+    stats_after.advance_level()
+    assert stats_before.level == 1
+    assert stats_after.level == 2
+
+
 def test_lose_life_triggers_game_over():
     settings = Settings()
     settings.ship_limit = 1

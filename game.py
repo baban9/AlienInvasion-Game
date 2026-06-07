@@ -50,9 +50,10 @@ class AlienInvasion:
 
             if self.stats.game_active:
                 self.ship.update()
-                self._update_bullets()
+                self.bullets.update()
                 self.fleet.update()
                 self._update_aliens()
+                self._remove_offscreen_bullets()
 
             self._update_screen()
 
@@ -103,8 +104,7 @@ class AlienInvasion:
         if len(self.bullets) < self.settings.bullets_allowed:
             self.bullets.add(Bullet(self))
 
-    def _update_bullets(self):
-        self.bullets.update()
+    def _remove_offscreen_bullets(self):
         for bullet in self.bullets.copy():
             if bullet.rect.bottom <= 0:
                 self.bullets.remove(bullet)
@@ -125,16 +125,20 @@ class AlienInvasion:
             True,
             True,
         )
-        if collisions:
-            self.stats.score += len(collisions) * self.settings.alien_points
+        for _alien in collisions:
+            self.stats.score += self.settings.alien_points
 
         if self.fleet.is_empty():
-            self.bullets.empty()
-            self.stats.advance_level()
-            self.fleet.create_fleet()
-            self.settings.fleet_direction = 1
-            self.level_flash_until = pygame.time.get_ticks() + 900
-            self.ship.center_ship()
+            self._start_next_level()
+
+    def _start_next_level(self):
+        """Advance difficulty and spawn a fresh fleet."""
+        self.bullets.empty()
+        self.stats.advance_level()
+        self.settings.fleet_direction = 1
+        self.fleet.create_fleet()
+        self.ship.center_ship()
+        self.level_flash_until = pygame.time.get_ticks() + 1500
 
     def _ship_hit(self):
         if self.bullets:
