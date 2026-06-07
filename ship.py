@@ -1,46 +1,51 @@
+"""Draw ship using vector graphics (no external assets required)."""
+
 import pygame
 
+
+def create_ship_surface(width: int, height: int) -> pygame.Surface:
+    """Build a simple rocket sprite."""
+    surface = pygame.Surface((width, height), pygame.SRCALPHA)
+    body = pygame.Rect(width * 0.2, height * 0.2, width * 0.6, height * 0.55)
+    pygame.draw.rect(surface, (70, 160, 255), body, border_radius=6)
+    pygame.draw.polygon(
+        surface,
+        (120, 200, 255),
+        [(width * 0.5, 0), (width * 0.78, height * 0.32), (width * 0.22, height * 0.32)],
+    )
+    pygame.draw.polygon(
+        surface,
+        (255, 120, 80),
+        [(width * 0.5, height), (width * 0.68, height * 0.72), (width * 0.32, height * 0.72)],
+    )
+    return surface
+
+
 class Ship:
-    """A class to manage the ship."""
+    """Manage player ship position and rendering."""
+
     def __init__(self, ai_game):
-        """Initialize the ship and set its starting position."""
         self.screen = ai_game.screen
         self.settings = ai_game.settings
         self.screen_rect = ai_game.screen.get_rect()
-
-
-        # Load the ship image and get its rect.
-        self.image = pygame.image.load('/Users/baban/Desktop/VS Code/test codes/FirstGame/AlienInvasion-Game/images/img_cntnt.bmp')
+        self.image = create_ship_surface(self.settings.ship_width, self.settings.ship_height)
         self.rect = self.image.get_rect()
-
-        # Start each new ship at the bottom center of the screen.
         self.rect.midbottom = self.screen_rect.midbottom
-
-        # Store a decimal value for the ship's horizontal position.
-        """ 
-        rect() attributes such as x store only integer values
-
-        """
         self.x = float(self.rect.x)
-
-        # Movement flag
         self.moving_right = False
         self.moving_left = False
 
-
-    def blitme(self):
-        """Draw the ship at its current location.""" 
-        self.screen.blit(self.image, self.rect)
+    def center_ship(self):
+        """Reset ship to the bottom center after losing a life."""
+        self.rect.midbottom = self.screen_rect.midbottom
+        self.x = float(self.rect.x)
 
     def update(self):
-        """Update the ship's position based on the movement flag.""" 
-
-        # Update the ship's x value, not the rect.
-
         if self.moving_right and self.rect.right < self.screen_rect.right:
             self.x += self.settings.ship_speed
         if self.moving_left and self.rect.left > 0:
             self.x -= self.settings.ship_speed
-
-        # Update rect object from self.x.
         self.rect.x = self.x
+
+    def blitme(self):
+        self.screen.blit(self.image, self.rect)

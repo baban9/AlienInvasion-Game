@@ -1,24 +1,38 @@
 # Alien Invasion Game
 
-Pygame arcade shooter demonstrating object-oriented game design, event-driven loops, and sprite management.
+Complete Pygame arcade shooter with alien fleets, scoring, lives, level progression, and a polished HUD. Built with modular OOP so gameplay logic stays testable without a display.
 
-## Problem
+## Gameplay
 
-Build a playable 2D game that separates configuration, entities, and the main loop so gameplay logic stays testable and extensible.
+- Destroy the alien fleet before they reach the bottom or collide with your ship
+- Each cleared wave increases speed and score multiplier
+- You have 3 lives; high score persists across runs in the session
 
-## Approach
+## Controls
 
-- **Entity model**: `Ship`, `Bullet`, and alien fleet as independent modules
-- **Settings centralization**: `settings.py` holds tunable game parameters
-- **Event loop**: Input handling isolated from rendering and state updates
+| Key | Action |
+|-----|--------|
+| P | Start game (from title screen) |
+| A / Left | Move left |
+| D / Right | Move right |
+| Space | Fire |
+| F | Toggle fullscreen |
+| R | Restart after game over |
+| Q | Quit |
 
-## Repository structure
+## Architecture
 
 ```
-Alien_invasion.py   Main game loop and orchestration
-settings.py         Screen size, speeds, limits
-ship.py             Player ship behavior
-bullet.py           Projectile logic
+game.py           Main loop, state machine, collision handling
+settings.py       Tunable constants and difficulty scaling
+ship.py           Player ship (procedural sprite, no external assets)
+bullet.py         Projectile sprites
+alien.py          Alien sprites and fleet manager
+game_stats.py     Score, lives, level, high score
+hud.py            Scoreboard and overlay screens
+collisions.py     Pure collision helpers (unit tested)
+Alien_invasion.py Entry point
+tests/            Pytest suite
 ```
 
 ## Reproducibility
@@ -28,19 +42,23 @@ python3 -m venv .venv
 source .venv/bin/activate
 pip install -r requirements.txt
 make setup
-python Alien_invasion.py
+make run
+make test
 ```
+
+## Design decisions
+
+- **Procedural sprites**: Ship and aliens are drawn with Pygame primitives so the game runs anywhere without missing image files
+- **Separated collisions**: Hit detection lives in `collisions.py` for headless testing
+- **Difficulty curve**: Speed and points scale per level via `Settings.increase_speed()`
+- **Game states**: Title screen, active play, level flash, and game over are explicit UI states
 
 ## Tech stack
 
-Python 3, Pygame
+Python 3, Pygame, pytest
 
-## Results
+## Future enhancements
 
-Functional arcade game with fleet escalation, lives system, and keyboard controls.
-
-## Limitations and next steps
-
-- Add unit tests for collision detection
-- Extract game state into a class for headless simulation
-- Add CI smoke test that imports all modules
+- Sound effects and background music
+- Power-ups (rapid fire, shield)
+- Leaderboard persisted to disk
